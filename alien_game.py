@@ -21,9 +21,13 @@ def start_screen(screen):
         "You're behind on your weekly quota of abductions.",
         "Help the alien catch up by abducting targets on Earth!",
         "",
+        "----------------------------------------------------------------------------------------------",
+        "Move the UFO with ARROWS and", 
+        "press SPACE to abduct cows with the track bean.",
+        "----------------------------------------------------------------------------------------------",
+        "",
         "Press any key to start the game...",
         "",
-        "Controls: move with ARROWS and press SPACE to abduct cows."
     ]
 
     # Render and display the introduction text
