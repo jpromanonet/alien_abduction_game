@@ -228,16 +228,23 @@ while running:
     # Cap the frame rate
     clock.tick(FPS)
 
-    # Countdown Timer Logic
+     # Countdown Timer Logic
     countdown_timer -= 1 / FPS  # Decrease the timer based on the frame rate
     if countdown_timer <= 0:
-        current_level += 1
-        abduction_target += 10 * current_level  # Increase the target for the next level
-        countdown_timer = 60  # Reset the countdown timer for the next level
-
-        # Reset the targets text for the next level
-        targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
-        targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
+        # Check if the player reached the abduction target for the current level
+        if current_score < abduction_target:
+            # Player didn't reach the abduction target, end the game
+            running = False
+        else:
+            # Move to the next level
+            current_level += 1
+            if current_level <= 10:
+                current_score = 0
+                abduction_target = 10 * current_level
+                countdown_timer = 60  # Reset the countdown timer for the next level
+                # Reset the targets text for the next level
+                targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
+                targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
 
     # Check if the player reached the abduction target for the current level
     if current_score >= abduction_target:
