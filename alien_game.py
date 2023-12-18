@@ -9,11 +9,13 @@ WIDTH, HEIGHT = 800, 600
 FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
+GRAY = (169, 169, 169)
+ORANGE = (255, 165, 0)
+LIGHT_BLUE = (173, 216, 230)  # Light blue color for the level indicator
 SHIP_GREEN = (0, 255, 0)  # Green color for the ship
 GRASS_GREEN = (0, 100, 0)  # Darker green color for the grass
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)  # Yellow color for the tractor beam
-ORANGE = (255, 165, 0)
 STAR_COUNT = int(WIDTH * HEIGHT * 0.001)
 
 # Create the game window
@@ -33,7 +35,7 @@ targets = []
 # Set initial score
 score = 0
 
-# Font for displaying the score
+# Font for displaying the score, level, and timer
 font = pygame.font.Font(None, 36)
 
 # Flag to track if spacebar is pressed
@@ -44,10 +46,30 @@ target_spawn_counter = 0
 TARGET_SPAWN_RATE = 120  # Adjust the rate to control the pace (higher values make it slower)
 
 # List to store stars
-stars = [{'x': random.randint(0, WIDTH), 'y': random.randint(0, HEIGHT), 'size': random.randint(1, 3)} for _ in range(STAR_COUNT)]
+stars = [{'x': random.randint(0, WIDTH), 'y': random.randint(0, HEIGHT), 'size': random.randint(1, 3),
+          'color': LIGHT_BLUE} for _ in range(STAR_COUNT)]
 
 # Grassy area at the bottom
 grass_rect = pygame.Rect(0, HEIGHT - 40, WIDTH, 40)
+
+# Level and Countdown Variables
+current_level = 1
+abduction_target = 10  # Initial target
+countdown_timer = 60  # Initial countdown timer in seconds
+
+# List of colors for each level
+level_colors = [
+    LIGHT_BLUE,
+    ORANGE,
+    RED,
+    YELLOW,
+    GRAY,
+    (0, 255, 0),  # Green
+    (255, 0, 255),  # Purple
+    (0, 255, 255),  # Cyan
+    (255, 165, 0),  # Orange
+    (128, 0, 128),  # Indigo
+]
 
 # Main game loop
 running = True
@@ -77,18 +99,19 @@ while running:
         targets.append(target_rect)
         target_spawn_counter = 0
 
-    # Update star glow animation
+    # Update star glow animation and color for the current level
     for star in stars:
         star['size'] += 0.05
         if star['size'] > 3:
             star['size'] = 1
+        star['color'] = level_colors[current_level - 1]
 
     # Clear the screen
     screen.fill(BLACK)
 
-    # Draw stars
+    # Draw stars with level-based color
     for star in stars:
-        pygame.draw.circle(screen, WHITE, (star['x'], star['y']), int(star['size']))
+        pygame.draw.circle(screen, star['color'], (star['x'], star['y']), int(star['size']))
 
     # Draw the grassy area
     pygame.draw.rect(screen, GRASS_GREEN, grass_rect)
@@ -121,11 +144,45 @@ while running:
     pygame.draw.rect(screen, ORANGE, score_rect.inflate(10, 5))
     screen.blit(score_text, score_rect)
 
+    # Draw the level indicator in a light-blue rectangle at the top center
+    level_text = font.render(f"Level: {current_level}", True, WHITE)
+    level_rect = level_text.get_rect(center=(WIDTH // 2, 20))
+    pygame.draw.rect(screen, LIGHT_BLUE, level_rect.inflate(10, 5))
+    screen.blit(level_text, level_rect)
+
+    # Draw the countdown timer in a red rectangle at the top right
+    timer_text = font.render(f"Time: {int(countdown_timer)}", True, WHITE)
+    timer_rect = timer_text.get_rect(topright=(WIDTH - 10, 10))
+    pygame.draw.rect(screen, RED, timer_rect.inflate(10, 5))
+    screen.blit(timer_text, timer_rect)
+
+    # Draw the targets to acquire for the current level in a gray rectangle at the top right
+    targets_text = font.render(f"Abductions: {score}/{abduction_target}", True, WHITE)
+    targets_rect = targets_text.get_rect(topright=(WIDTH - 10, 60))
+    pygame.draw.rect(screen, GRAY, targets_rect.inflate(10, 5))
+    screen.blit(targets_text, targets_rect)
+
     # Update the display
     pygame.display.flip()
 
     # Cap the frame rate
     clock.tick(FPS)
 
+   # Countdown Timer Logic
+    countdown_timer -= 1 / FPS  # Decrease the timer based on the frame rate
+    if countdown_timer <= 0:
+        print(f"Level {current_level} completed! Score: {score}")
+        current_level += 1
+        score = 0  # Reset the score for the next level
+        abduction_target += 10  # Increase the target for the next level
+        countdown_timer = 60  # Reset the countdown timer for the next level
+
+    # Check if the player reached the abduction target for the current level
+    if score >= abduction_target:
+        # Move to the next level
+        current_level += 1
+        abduction_target += 10  # Increase the target for the next level
+        countdown_timer = 60  # Reset the countdown timer for the next level
+ 
 # Quit Pygame
 pygame.quit()
