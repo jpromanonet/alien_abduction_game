@@ -9,10 +9,12 @@ WIDTH, HEIGHT = 800, 600
 FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
+SHIP_GREEN = (0, 255, 0)  # Green color for the ship
+GRASS_GREEN = (0, 100, 0)  # Darker green color for the grass
 RED = (255, 0, 0)
-ORANGE = (255, 165, 0)  # Orange color for the score rectangle
-STAR_COUNT = int(WIDTH * HEIGHT * 0.001)  # Adjust star count
+YELLOW = (255, 255, 0)  # Yellow color for the tractor beam
+ORANGE = (255, 165, 0)
+STAR_COUNT = int(WIDTH * HEIGHT * 0.001)
 
 # Create the game window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -89,33 +91,33 @@ while running:
         pygame.draw.circle(screen, WHITE, (star['x'], star['y']), int(star['size']))
 
     # Draw the grassy area
-    pygame.draw.rect(screen, GREEN, grass_rect)
+    pygame.draw.rect(screen, GRASS_GREEN, grass_rect)
 
     # Draw the player and targets
-    pygame.draw.rect(screen, GREEN, player_rect)
+    pygame.draw.rect(screen, SHIP_GREEN, player_rect)
     for target in targets:
         pygame.draw.rect(screen, WHITE, target)
 
     # Draw the tractor beam when spacebar is pressed
     if space_pressed:
         tractor_beam_rect = pygame.Rect(player_rect.centerx - 2, player_rect.centery, 4, HEIGHT - player_rect.centery)
-        pygame.draw.line(screen, GREEN, (player_rect.centerx, player_rect.centery),
+        pygame.draw.line(screen, YELLOW, (player_rect.centerx, player_rect.centery),
                          (player_rect.centerx, HEIGHT), 2)
 
         # Check for collisions with targets
         for target in targets[:]:
             if tractor_beam_rect.colliderect(target):
-                # Change the color of the tractor beam to green
-                pygame.draw.line(screen, GREEN, (player_rect.centerx, player_rect.centery),
+                # Change the color of the tractor beam to yellow
+                pygame.draw.line(screen, YELLOW, (player_rect.centerx, player_rect.centery),
                                  (player_rect.centerx, target.bottom), 2)
                 # Change the color of the target to red
                 pygame.draw.rect(screen, RED, target)
                 targets.remove(target)
                 score += 1
 
-    # Draw the score in an orange rectangle
+    # Draw the score in an orange rectangle at the top left
     score_text = font.render(f"Score: {score}", True, WHITE)
-    score_rect = score_text.get_rect(center=(WIDTH // 2, HEIGHT - 20))
+    score_rect = score_text.get_rect(topleft=(10, 10))
     pygame.draw.rect(screen, ORANGE, score_rect.inflate(10, 5))
     screen.blit(score_text, score_rect)
 
