@@ -47,6 +47,28 @@ def wait_for_key():
             elif event.type == pygame.KEYDOWN:
                 waiting = False
 
+def show_text_on_screen(screen, text, font_size, y_position):
+    font = pygame.font.Font(None, font_size)
+    text_render = font.render(text, True, (255, 255, 255))
+    text_rect = text_render.get_rect(center=(WIDTH // 2, y_position))
+    screen.blit(text_render, text_rect)
+
+def game_over_screen(screen):
+    screen.fill((0, 0, 0))  # Fill the screen with black
+    show_text_on_screen(screen, "Game Over", 50, HEIGHT // 3)
+    show_text_on_screen(screen, f"Your final score: {score}", 30, HEIGHT // 2)
+    show_text_on_screen(screen, "Press any key to exit...", 20, HEIGHT * 2 // 3)
+    pygame.display.flip()
+    wait_for_key()
+
+def victory_screen(screen):
+    screen.fill((0, 0, 0))  # Fill the screen with black
+    show_text_on_screen(screen, "Congratulations!", 50, HEIGHT // 3)
+    show_text_on_screen(screen, f"You've completed all levels with a score of {score}", 30, HEIGHT // 2)
+    show_text_on_screen(screen, "Press any key to exit...", 20, HEIGHT * 2 // 3)
+    pygame.display.flip()
+    wait_for_key()
+
 # Initialize Pygame
 pygame.init()
 
@@ -234,6 +256,7 @@ while running:
         # Check if the player reached the abduction target for the current level
         if current_score < abduction_target:
             # Player didn't reach the abduction target, end the game
+            game_over_screen(screen)
             running = False
         else:
             # Move to the next level
@@ -257,6 +280,9 @@ while running:
             # Reset the targets text for the next level
             targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
             targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
+        else:
+            victory_screen(screen)
+            running = False
 
 # Quit Pygame
 pygame.quit()
