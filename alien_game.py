@@ -138,27 +138,30 @@ while running:
                 targets.remove(target)
                 score += 1
 
+    info_line_y = 10  # Adjust the vertical position as needed
+    info_spacing = 100  # Adjust the spacing as needed
+
     # Draw the score in an orange rectangle at the top left
     score_text = font.render(f"Score: {score}", True, WHITE)
-    score_rect = score_text.get_rect(topleft=(10, 10))
+    score_rect = score_text.get_rect(topleft=(10, info_line_y))
     pygame.draw.rect(screen, ORANGE, score_rect.inflate(10, 5))
     screen.blit(score_text, score_rect)
 
-    # Draw the level indicator in a light-blue rectangle at the top center
+    # Draw the level indicator in a light-blue rectangle at the top left (next to the score)
     level_text = font.render(f"Level: {current_level}", True, WHITE)
-    level_rect = level_text.get_rect(center=(WIDTH // 2, 20))
+    level_rect = level_text.get_rect(topleft=(score_rect.topright[0] + info_spacing, info_line_y))
     pygame.draw.rect(screen, LIGHT_BLUE, level_rect.inflate(10, 5))
     screen.blit(level_text, level_rect)
 
-    # Draw the countdown timer in a red rectangle at the top right
+    # Draw the countdown timer in a red rectangle at the top left (next to the level)
     timer_text = font.render(f"Time: {int(countdown_timer)}", True, WHITE)
-    timer_rect = timer_text.get_rect(topright=(WIDTH - 10, 10))
+    timer_rect = timer_text.get_rect(topleft=(level_rect.topright[0] + info_spacing, info_line_y))
     pygame.draw.rect(screen, RED, timer_rect.inflate(10, 5))
     screen.blit(timer_text, timer_rect)
 
-    # Draw the targets to acquire for the current level in a gray rectangle at the top right
+    # Draw the targets to acquire for the current level in a gray rectangle at the top left (next to the timer)
     targets_text = font.render(f"Abductions: {score}/{abduction_target}", True, WHITE)
-    targets_rect = targets_text.get_rect(topright=(WIDTH - 10, 60))
+    targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
     pygame.draw.rect(screen, GRAY, targets_rect.inflate(10, 5))
     screen.blit(targets_text, targets_rect)
 
