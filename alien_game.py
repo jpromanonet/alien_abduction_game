@@ -56,6 +56,7 @@ grass_rect = pygame.Rect(0, HEIGHT - 40, WIDTH, 40)
 current_level = 1
 abduction_target = 10  # Initial target
 countdown_timer = 60  # Initial countdown timer in seconds
+current_score = 0  # New counter to track the score for the current level
 
 # List of colors for each level
 level_colors = [
@@ -136,10 +137,11 @@ while running:
                 # Change the color of the target to red
                 pygame.draw.rect(screen, RED, target)
                 targets.remove(target)
+                current_score += 1
                 score += 1
 
     info_line_y = 10  # Adjust the vertical position as needed
-    info_spacing = 100  # Adjust the spacing as needed
+    info_spacing = 80  # Adjust the spacing as needed
 
     # Draw the score in an orange rectangle at the top left
     score_text = font.render(f"Score: {score}", True, WHITE)
@@ -160,7 +162,7 @@ while running:
     screen.blit(timer_text, timer_rect)
 
     # Draw the targets to acquire for the current level in a gray rectangle at the top left (next to the timer)
-    targets_text = font.render(f"Abductions: {score}/{abduction_target}", True, WHITE)
+    targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
     targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
     pygame.draw.rect(screen, GRAY, targets_rect.inflate(10, 5))
     screen.blit(targets_text, targets_rect)
@@ -171,21 +173,28 @@ while running:
     # Cap the frame rate
     clock.tick(FPS)
 
-   # Countdown Timer Logic
+    # Countdown Timer Logic
     countdown_timer -= 1 / FPS  # Decrease the timer based on the frame rate
     if countdown_timer <= 0:
-        print(f"Level {current_level} completed! Score: {score}")
         current_level += 1
-        score = 0  # Reset the score for the next level
-        abduction_target += 10  # Increase the target for the next level
+        abduction_target += 10 * current_level  # Increase the target for the next level
         countdown_timer = 60  # Reset the countdown timer for the next level
 
+        # Reset the targets text for the next level
+        targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
+        targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
+
     # Check if the player reached the abduction target for the current level
-    if score >= abduction_target:
+    if current_score >= abduction_target:
         # Move to the next level
         current_level += 1
-        abduction_target += 10  # Increase the target for the next level
-        countdown_timer = 60  # Reset the countdown timer for the next level
- 
+        if current_level <= 10:
+            current_score = 0
+            abduction_target = 10 * current_level
+            countdown_timer = 60  # Reset the countdown timer for the next level
+            # Reset the targets text for the next level
+            targets_text = font.render(f"Abductions: {current_score}/{abduction_target}", True, WHITE)
+            targets_rect = targets_text.get_rect(topleft=(timer_rect.topright[0] + info_spacing, info_line_y))
+
 # Quit Pygame
 pygame.quit()
