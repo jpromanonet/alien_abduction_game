@@ -87,10 +87,6 @@ font = pygame.font.Font(None, 36)
 # Flag to track if spacebar is pressed
 space_pressed = False
 
-# Counter to control the pace of target appearances
-target_spawn_counter = 0
-TARGET_SPAWN_RATE = 120  # Adjust the rate to control the pace (higher values make it slower)
-
 # List to store stars
 stars = [{'x': random.randint(0, WIDTH), 'y': random.randint(0, HEIGHT), 'size': random.randint(1, 3),
           'color': LIGHT_BLUE} for _ in range(STAR_COUNT)]
@@ -103,6 +99,10 @@ current_level = 1
 abduction_target = 10  # Initial target
 countdown_timer = 60  # Initial countdown timer in seconds
 current_score = 0  # New counter to track the score for the current level
+
+# Counter to control the pace of target appearances
+target_spawn_counter = 0
+TARGET_SPAWN_RATE = max(30, 120 - (current_level * 90))  # Adjust the rate based on the current level
 
 # List of colors for each level
 level_colors = [
@@ -196,7 +196,7 @@ while running:
                 score += 1
 
     info_line_y = 10  # Adjust the vertical position as needed
-    info_spacing = 80  # Adjust the spacing as needed
+    info_spacing = 75  # Adjust the spacing as needed
 
     # Draw the score in an orange rectangle at the top left
     score_text = font.render(f"Score: {score}", True, WHITE)
