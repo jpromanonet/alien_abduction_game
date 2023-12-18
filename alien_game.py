@@ -69,6 +69,14 @@ def victory_screen(screen):
     pygame.display.flip()
     wait_for_key()
 
+# Load spaceship and cow images
+ovni = pygame.image.load("ovni.png")
+cow = pygame.image.load("cow.png")
+
+# Resize images if needed
+ovni = pygame.transform.scale(ovni, (50, 50))
+cow = pygame.transform.scale(cow, (40, 40))
+
 # Initialize Pygame
 pygame.init()
 
@@ -173,7 +181,7 @@ while running:
     # Spawn a new target based on the counter
     target_spawn_counter += 1
     if target_spawn_counter >= TARGET_SPAWN_RATE:
-        target_rect = pygame.Rect(random.randint(0, WIDTH - 20), HEIGHT - 20, 20, 20)
+        target_rect = pygame.Rect(random.randint(0, WIDTH - 20), HEIGHT - 50, 50, 50)
         targets.append(target_rect)
         target_spawn_counter = 0
 
@@ -195,9 +203,10 @@ while running:
     pygame.draw.rect(screen, GRASS_GREEN, grass_rect)
 
     # Draw the player and targets
-    pygame.draw.rect(screen, SHIP_GREEN, player_rect)
+    screen.blit(ovni, player_rect)
+    
     for target in targets:
-        pygame.draw.rect(screen, WHITE, target)
+        screen.blit(cow, target)
 
     # Draw the tractor beam when spacebar is pressed
     if space_pressed:
