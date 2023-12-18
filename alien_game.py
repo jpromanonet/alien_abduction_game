@@ -1,5 +1,51 @@
 import pygame
 import random
+import sys
+
+def start_screen(screen):
+    # Constants
+    WIDTH, HEIGHT = 800, 600
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    FONT_SIZE = 30
+
+    # Font for displaying the text
+    font = pygame.font.Font(None, FONT_SIZE)
+
+    # Fill the screen with the background color
+    screen.fill(BLACK)
+
+    # Introduction text
+    intro_text = [
+        "Welcome, Alien Abductor!",
+        "You're behind on your weekly quota of abductions.",
+        "Help the alien catch up by abducting targets on Earth!",
+        "",
+        "Press any key to start the game..."
+    ]
+
+    # Render and display the introduction text
+    y_position = HEIGHT // 4
+    for line in intro_text:
+        text = font.render(line, True, WHITE)
+        text_rect = text.get_rect(center=(WIDTH // 2, y_position))
+        screen.blit(text, text_rect)
+        y_position += FONT_SIZE
+
+    pygame.display.flip()
+
+    # Wait for a key press to start the game
+    wait_for_key()
+
+def wait_for_key():
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                waiting = False
 
 # Initialize Pygame
 pygame.init()
@@ -72,14 +118,23 @@ level_colors = [
     (128, 0, 128),  # Indigo
 ]
 
+# Function to display the start screen
+start_screen(screen)
+
 # Main game loop
 running = True
+game_started = False  # Flag to track whether the game has started
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            space_pressed = True
+        elif event.type == pygame.KEYDOWN:
+            if game_started:
+                game_started = True  # Set the flag to True to avoid calling start_screen repeatedly
+                continue  # Skip the rest of the loop until the game has started
+            elif event.key == pygame.K_SPACE:
+                space_pressed = True
         elif event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
             space_pressed = False
 
